@@ -2,7 +2,6 @@
 
 > **Integrantes del Grupo:**[cite: 1]
 > * Moises Benjamin Vasquez Condori[cite: 1]
-> * Abigail Quispe Rogellano[cite: 1]
 >
 > **Docente:** Ing. Elias Cassal Baldiviezo[cite: 1]
 > **Materia:** Sistemas Paralelos[cite: 1]
