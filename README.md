@@ -1,42 +1,29 @@
-# 🚀 Proyecto de Sistemas Paralelos — SysLab 2.0[cite: 1]
+# 🏋️‍♂️ Proyecto: Sistema de Gestión de Gimnasio "Mar-Yen"
 
-> **Integrantes del Grupo:**[cite: 1]
-> * Moises Benjamin Vasquez Condori[cite: 1]
->
-> **Docente:** Ing. Elias Cassal Baldiviezo[cite: 1]
-> **Materia:** Sistemas Paralelos[cite: 1]
-> **Arquitectura Base:** SysLab 2.0[cite: 1]
+**Materia:** Sistemas Paralelos  
+**Docente:** Ing. Elias Cassal Baldiviezo  
+**Integrante:** Moises Benjamin Vasquez Condori  
+**Arquitectura:** SysLab 2.0 (Docker Compose, PostgreSQL, Prisma ORM, Node.js)
 
 ---
 
-## 📌 1. Descripción del Proyecto[cite: 1]
-Despliegue y configuración de un entorno de desarrollo multi-contenedor utilizando Docker Compose, compuesto por servicios de Backend (Node.js/Express), Frontend y una base de datos PostgreSQL mapeada mediante Prisma ORM, junto a la integración de reglas de comportamiento para agentes de IA alineados a la arquitectura SysLab 2.0.
+## 📋 Descripción del Sistema
+Plataforma web para la administración del gimnasio Mar-Yen. El sistema gestiona membresías multimes, automatiza alertas de vencimiento, valida accesos en recepción mediante pases digitales (QR/ID) y controla la asignación de rutinas (generales vs. personalizadas).
 
 ---
 
-## 🛠️ 2. Arquitectura de Tecnologías (SysLab 2.0)[cite: 1]
-El proyecto está diseñado sobre la arquitectura **SysLab 2.0**, distribuyendo responsabilidades en tres capas principales orquestadas mediante contenedores Docker:[cite: 1]
-* **Frontend:** Node.js con entorno de desarrollo responsivo.[cite: 1]
-* **Backend:** Node.js — API / Servidor de aplicaciones.[cite: 1]
-* **Persistencia / Base de Datos:** PostgreSQL con **Prisma ORM** como mapeador objeto-relacional.[cite: 1]
-* **Agente de IA:** Reglas (`rules`) y habilidades (`skills`) personalizadas integradas desde TasteSkill.[cite: 1]
+## 🛠️ Requerimientos del Sistema
+
+### Requerimientos Funcionales (RF)
+* **RF-01 (Membresías y Alertas):** Registro de clientes y planes con seguimiento diario del avance y emisión de alertas de cobro al cumplir el periodo.
+* **RF-02 (Pase Digital de Recepción):** Verificación instantánea en recepción mostrando estado del cliente (Verde: Activo / Rojo: Vencido) y días transcurridos.
+* **RF-03 (Rutinas):** Módulo de rutinas generales incluidas e integración de rutinas personalizadas de pago adicional.
+* **RF-04 (Procesamiento Concurrente):** Procesamiento de peticiones concurrentes para validación de asistencia y notificaciones de pago.
 
 ---
 
-## 📁 3. Estructura del Repositorio[cite: 1]
-```text
-.
-├── agente/                # Skills e instrucciones del agente de IA
-│   ├── skills/            # Skills importadas de TasteSkill y custom SysLab 2.0
-│   └── rules.md           # Reglas de comportamiento del agente
-├── backend/               # Código fuente del Backend
-│   ├── prisma/            # Configuración de persistencia
-│   │   ├── schema.prisma  # Modelo de datos Prisma
-│   │   └── seed.js        # Script de datos iniciales
-│   ├── Dockerfile         # Imagen Docker del Backend
-│   └── package.json
-├── frontend/              # Código fuente del Frontend
-│   ├── Dockerfile         # Imagen Docker del Frontend
-│   └── package.json
-├── docker-compose.yml     # Orquestación de contenedores (Frontend, Backend, DB)
-└── README.md              # Documentación general del proyecto
+## 🚀 Despliegue con Docker
+```bash
+docker compose up -d
+docker compose exec backend npx prisma migrate dev
+docker compose exec backend node prisma/seed.js
