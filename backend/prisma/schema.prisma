@@ -7,10 +7,83 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+enum Rol {
+  CLIENTE
+  ADMIN
+  COACH
 }
 
+enum EstadoMembresia {
+  ACTIVO
+  VENCIDO
+  PENDIENTE_APROBACION
+}
+
+enum MetodoPago {
+  EFECTIVO
+  QR
+}
+
+model Usuario {
+  id               Int              @id @default(autoincrement())
+  ci               String           @unique
+  nombreCompleto   String
+  password         String
+  rol              Rol              @default(CLIENTE)
+  estado           EstadoMembresia  @default(VENCIDO)
+  fechaVencimiento DateTime?
+  
+  membresias       Membresia[]
+  asistencias      Asistencia[]
+  quejas           Queja[]
+  
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Membresia {
+  id              Int              @id @default(autoincrement())
+  usuarioId       Int
+  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
+  monto           Float
+  metodoPago      MetodoPago
+  comprobanteUrl  String?
+  aprobado        Boolean          @default(false)
+  fechaInicio     DateTime         @default(now())
+  fechaFin        DateTime
+  
+  createdAt       DateTime         @default(now())
+}
+
+model Asistencia {
+  id              Int              @id @default(autoincrement())
+  usuarioId       Int
+  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
+  fechaIngreso    DateTime         @default(now())
+  permitido       Boolean
+}
+
+model Suplemento {
+  id              Int              @id @default(autoincrement())
+  nombre          String
+  descripcion     String
+  precio          Float
+  stock           Int
+  imagenUrl       String?
+  
+  createdAt       DateTime         @default(now())
+}
+
+model ConfiguracionGym {
+  id              Int              @id @default(1)
+  qrPagoUrl       String?
+  anuncioOficial  String?
+}
+
+model Queja {
+  id              Int              @id @default(autoincrement())
+  usuarioId       Int
+  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
+  mensaje         String
+  createdAt       DateTime         @default(now())
+}
