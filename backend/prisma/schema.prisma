@@ -102,6 +102,12 @@ model Publicacion {
   creado_en  DateTime @default(now())
 }
 
+model ConfiguracionGym {
+  id       Int      @id @default(1)
+  qr_url   String?
+  actualizado_en DateTime @updatedAt
+}
+
 model Queja {
   id         Int      @id @default(autoincrement())
   usuario_id Int

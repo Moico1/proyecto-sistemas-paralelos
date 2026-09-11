@@ -13,6 +13,24 @@ router.post('/auth/login', async (req, res) => {
   return res.json({ usuario: publicUser(account), token: `${account.id}:${account.rol}` });
 });
 
+router.post('/registro', async (req, res) => {
+  const { ci, nombre, apellido, email, password } = req.body;
+  if (!ci || !nombre || !apellido || !email) return res.status(400).json({ mensaje: 'C.I., nombre, apellido y email son obligatorios' });
+  try {
+    const user = await prisma.usuario.create({
+      data: {
+        ci: ci.trim(), nombre: nombre.trim(), apellido: apellido.trim(), email: email.trim().toLowerCase(),
+        password: password || null, rol: 'CLIENTE', estado: 'PENDIENTE',
+        membresias: { create: { fecha_inicio: new Date(), fecha_fin: new Date(Date.now() + 30 * 86400000), estado: 'PENDIENTE' } },
+      },
+    });
+    return res.status(201).json({ mensaje: 'Registro creado. Presenta tu pago en recepción para activar la membresía.', usuario: publicUser(user) });
+  } catch (error) {
+    if (error.code === 'P2002') return res.status(409).json({ mensaje: 'El C.I. o email ya está registrado' });
+    return res.status(500).json({ mensaje: 'No se pudo crear el registro' });
+  }
+});
+
 router.get('/cliente/:ci', async (req, res) => {
   const user = await prisma.usuario.findUnique({ where: { ci: req.params.ci }, include: { membresias: { orderBy: { fecha_fin: 'desc' }, take: 1 }, pagos: { orderBy: { creado_en: 'desc' }, take: 5 }, quejas: { orderBy: { creado_en: 'desc' }, take: 5 } } });
   if (!user) return res.status(404).json({ mensaje: 'Cliente no encontrado' });
@@ -20,12 +38,15 @@ router.get('/cliente/:ci', async (req, res) => {
 });
 
 router.get('/publico', async (_req, res) => {
-  const [productos, publicaciones] = await Promise.all([
+  const [productos, publicaciones, configuracion] = await Promise.all([
     prisma.producto.findMany({ where: { activo: true }, orderBy: { creado_en: 'desc' } }),
     prisma.publicacion.findMany({ where: { publicado: true }, orderBy: { creado_en: 'desc' } }),
+    prisma.configuracionGym.findUnique({ where: { id: 1 } }),
   ]);
-  return res.json({ productos, publicaciones });
+  return res.json({ productos, publicaciones, configuracion });
 });
+
+router.get('/configuracion', async (_req, res) => res.json({ configuracion: await prisma.configuracionGym.findUnique({ where: { id: 1 } }) }));
 
 router.post('/pagos', async (req, res) => {
   const { ci, metodo, comprobante_url } = req.body;
@@ -49,8 +70,9 @@ router.get('/admin/resumen', async (_req, res) => {
     prisma.queja.findMany({ include: { usuario: true }, orderBy: { creado_en: 'desc' }, take: 20 }),
     prisma.producto.findMany({ orderBy: { id: 'desc' } }),
     prisma.asistencia.count(),
+    prisma.configuracionGym.findUnique({ where: { id: 1 } }),
   ]);
-  return res.json({ usuarios: usuarios.map((user) => ({ ...publicUser(user), membresia: user.membresias[0] || null })), pagos, quejas, productos, asistencias });
+  return res.json({ usuarios: usuarios.map((user) => ({ ...publicUser(user), membresia: user.membresias[0] || null })), pagos, quejas, productos, asistencias, configuracion });
 });
 
 router.patch('/admin/pagos/:id', async (req, res) => {
@@ -63,8 +85,17 @@ router.patch('/admin/quejas/:id', async (req, res) => res.json({ queja: await pr
 
 router.post('/admin/productos', async (req, res) => res.status(201).json({ producto: await prisma.producto.create({ data: { nombre: req.body.nombre, descripcion: req.body.descripcion || '', precio: Number(req.body.precio), stock: Number(req.body.stock || 0), imagen_url: req.body.imagen_url || null } }) }));
 
+router.patch('/admin/productos/:id', async (req, res) => res.json({ producto: await prisma.producto.update({ where: { id: Number(req.params.id) }, data: { ...(req.body.stock !== undefined ? { stock: Number(req.body.stock) } : {}), ...(req.body.activo !== undefined ? { activo: Boolean(req.body.activo) } : {}) } }) }));
+
+router.delete('/admin/productos/:id', async (req, res) => res.json({ producto: await prisma.producto.update({ where: { id: Number(req.params.id) }, data: { activo: false, stock: 0 } }) }));
+
 router.post('/admin/publicaciones', async (req, res) => res.status(201).json({ publicacion: await prisma.publicacion.create({ data: { titulo: req.body.titulo, contenido: req.body.contenido } }) }));
 
 router.patch('/admin/usuarios/:id/estado', async (req, res) => res.json({ usuario: await prisma.usuario.update({ where: { id: Number(req.params.id) }, data: { estado: req.body.estado } }) }));
+
+router.patch('/admin/configuracion', async (req, res) => {
+  const qr_url = req.body.qr_url || null;
+  return res.json({ configuracion: await prisma.configuracionGym.upsert({ where: { id: 1 }, update: { qr_url }, create: { id: 1, qr_url } }) });
+});
 
 module.exports = router;

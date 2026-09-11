@@ -12,6 +12,7 @@ async function main() {
   await prisma.membresia.deleteMany();
   await prisma.producto.deleteMany();
   await prisma.publicacion.deleteMany();
+  await prisma.configuracionGym.deleteMany();
   await prisma.usuario.deleteMany();
 
   const admin = await prisma.usuario.create({
@@ -54,6 +55,7 @@ async function main() {
       { titulo: 'Semana de bienvenida', contenido: 'Trae a un amigo y ambos reciben una evaluacion gratuita.', publicado: true },
     ],
   });
+  await prisma.configuracionGym.create({ data: { id: 1, qr_url: null } });
 
   console.log(`Seed completado. Admin: ${admin.usuario}, recepcion: ${recepcion.usuario}`);
 }

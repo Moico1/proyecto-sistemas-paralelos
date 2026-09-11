@@ -37,6 +37,9 @@ Desde un celular conectado a la misma Wi-Fi usa la IP local de la computadora, p
 - **Recepción / Tablet:** valida C.I., registra asistencia y muestra acceso verde o rojo con días restantes.
 - **Cliente:** consulta tarjeta virtual, catálogo, registra comprobante por QR/efectivo y envía quejas.
 - **Administración:** inicia sesión, aprueba pagos, atiende quejas, crea productos y publica avisos.
+- **Imágenes y QR:** administración puede seleccionar una imagen desde PC/celular para productos y guardar el QR de cobro; el navegador la envía como imagen embebida.
+- **Inventario:** cada producto puede retirarse del catálogo; esto lo marca inactivo y coloca su stock en cero sin borrar el historial.
+- **Registro rápido:** recepción puede crear clientes pendientes desde la misma pantalla.
 
 Credenciales de demostración:
 
@@ -69,3 +72,10 @@ curl -X POST http://localhost:3000/api/asistencia/validar \
 Los datos de prueba son `8888888` (membresía activa) y `9999999` (membresía vencida).
 
 > En desarrollo se usa `prisma db push` porque la carpeta de migraciones heredada tiene permisos de otro usuario en algunos equipos Linux. En una instalación limpia se recomienda corregir esos permisos y generar una migración formal antes de producción.
+
+Si Docker conserva un volumen de `node_modules` anterior después de actualizar Prisma, regenera el cliente con:
+
+```bash
+docker compose exec backend npx prisma generate
+docker compose restart backend
+```
