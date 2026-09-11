@@ -64,7 +64,7 @@ router.post('/quejas', async (req, res) => {
 });
 
 router.get('/admin/resumen', async (_req, res) => {
-  const [usuarios, pagos, quejas, productos, asistencias] = await Promise.all([
+  const [usuarios, pagos, quejas, productos, asistencias, configuracion] = await Promise.all([
     prisma.usuario.findMany({ include: { membresias: { orderBy: { fecha_fin: 'desc' }, take: 1 } }, orderBy: { id: 'desc' } }),
     prisma.pago.findMany({ where: { estado: 'PENDIENTE' }, include: { usuario: true, membresia: true }, orderBy: { creado_en: 'desc' } }),
     prisma.queja.findMany({ include: { usuario: true }, orderBy: { creado_en: 'desc' }, take: 20 }),

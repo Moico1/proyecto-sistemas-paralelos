@@ -70,7 +70,7 @@ $('#client-form').addEventListener('submit', async (event) => {
 
 $('#login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  try { await request('/api/auth/login', { method: 'POST', body: JSON.stringify({ usuario: $('#login-user').value, password: $('#login-password').value }) }); $('#admin-login').classList.add('hidden'); await loadAdmin(); } catch (error) { $('#admin-login').querySelector('small').textContent = error.message; }
+  try { await request('/api/auth/login', { method: 'POST', body: JSON.stringify({ usuario: $('#login-user').value, password: $('#login-password').value }) }); $('#admin-login').classList.add('hidden'); await loadAdmin(); } catch (error) { $('#admin-login').querySelector('small').textContent = `Error: ${error.message}`; $('#admin-dashboard').classList.remove('hidden'); $('#admin-dashboard').innerHTML = `<div class="notice">No se pudo cargar el panel: ${escapeHtml(error.message)}</div>`; }
 });
 
 async function loadAdmin() {
