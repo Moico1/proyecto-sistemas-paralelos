@@ -10,80 +10,108 @@ datasource db {
 enum Rol {
   CLIENTE
   ADMIN
-  COACH
+  RECEPCION
+}
+
+enum EstadoUsuario {
+  ACTIVO
+  VENCIDO
+  PENDIENTE
 }
 
 enum EstadoMembresia {
-  ACTIVO
-  VENCIDO
-  PENDIENTE_APROBACION
+  ACTIVA
+  VENCIDA
+  PENDIENTE
 }
 
 enum MetodoPago {
-  EFECTIVO
   QR
+  EFECTIVO
+}
+
+enum EstadoPago {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
 }
 
 model Usuario {
-  id               Int              @id @default(autoincrement())
-  ci               String           @unique
-  nombreCompleto   String
-  password         String
-  rol              Rol              @default(CLIENTE)
-  estado           EstadoMembresia  @default(VENCIDO)
-  fechaVencimiento DateTime?
-  
-  membresias       Membresia[]
-  asistencias      Asistencia[]
-  quejas           Queja[]
-  
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  id          Int          @id @default(autoincrement())
+  ci          String       @unique
+  nombre      String
+  apellido    String
+  email       String       @unique
+  rol         Rol          @default(CLIENTE)
+  estado      EstadoUsuario @default(PENDIENTE)
+  usuario     String?      @unique
+  password    String?
+  membresias Membresia[]
+  asistencias Asistencia[]
+  pagos       Pago[]
+  quejas      Queja[]
 }
 
 model Membresia {
-  id              Int              @id @default(autoincrement())
-  usuarioId       Int
-  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
-  monto           Float
-  metodoPago      MetodoPago
-  comprobanteUrl  String?
-  aprobado        Boolean          @default(false)
-  fechaInicio     DateTime         @default(now())
-  fechaFin        DateTime
-  
-  createdAt       DateTime         @default(now())
+  id           Int              @id @default(autoincrement())
+  usuario_id   Int
+  fecha_inicio DateTime
+  fecha_fin    DateTime
+  estado       EstadoMembresia
+  usuario      Usuario          @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  pagos        Pago[]
 }
 
 model Asistencia {
-  id              Int              @id @default(autoincrement())
-  usuarioId       Int
-  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
-  fechaIngreso    DateTime         @default(now())
-  permitido       Boolean
+  id         Int                 @id @default(autoincrement())
+  usuario_id Int
+  fecha_hora DateTime            @default(now())
+  resultado  ResultadoAsistencia
+  usuario    Usuario             @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
-model Suplemento {
-  id              Int              @id @default(autoincrement())
-  nombre          String
-  descripcion     String
-  precio          Float
-  stock           Int
-  imagenUrl       String?
-  
-  createdAt       DateTime         @default(now())
+model Pago {
+  id              Int         @id @default(autoincrement())
+  membresia_id    Int
+  usuario_id      Int
+  metodo          MetodoPago
+  comprobante_url String?
+  estado          EstadoPago  @default(PENDIENTE)
+  creado_en       DateTime    @default(now())
+  aprobado_en     DateTime?
+  membresia       Membresia   @relation(fields: [membresia_id], references: [id], onDelete: Cascade)
+  usuario         Usuario     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
 }
 
-model ConfiguracionGym {
-  id              Int              @id @default(1)
-  qrPagoUrl       String?
-  anuncioOficial  String?
+model Producto {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  precio      Float
+  stock       Int      @default(0)
+  imagen_url  String?
+  activo      Boolean  @default(true)
+  creado_en   DateTime @default(now())
+}
+
+model Publicacion {
+  id         Int      @id @default(autoincrement())
+  titulo     String
+  contenido  String
+  publicado  Boolean  @default(true)
+  creado_en  DateTime @default(now())
 }
 
 model Queja {
-  id              Int              @id @default(autoincrement())
-  usuarioId       Int
-  usuario         Usuario          @relation(fields: [usuarioId], references: [id])
-  mensaje         String
-  createdAt       DateTime         @default(now())
+  id         Int      @id @default(autoincrement())
+  usuario_id Int
+  mensaje    String
+  estado     String   @default("PENDIENTE")
+  creado_en  DateTime @default(now())
+  usuario    Usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+}
+
+enum ResultadoAsistencia {
+  PERMITIDO
+  DENEGADO
 }
