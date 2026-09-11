@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node -e \"console.log(\\\"Frontend running\\\"); setInterval(()=>{}, 1000)\""
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "Interfaz de recepción para Gym Mar-Yen",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }

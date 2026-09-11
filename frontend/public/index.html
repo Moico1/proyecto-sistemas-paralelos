@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mar-Yen | SysLab 2.0</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="site-wrap">
+      <header class="topbar">
+        <a class="brand" href="#recepcion"><span>MY</span><strong>Mar-Yen</strong><small>SysLab 2.0</small></a>
+        <nav class="mode-nav" aria-label="Vistas del sistema">
+          <button class="mode-button active" data-view="recepcion">Recepcion</button>
+          <button class="mode-button" data-view="cliente">Cliente</button>
+          <button class="mode-button" data-view="admin">Administracion</button>
+        </nav>
+        <span class="api-state"><i></i> API en linea</span>
+      </header>
+      <main>
+        <section id="view-recepcion" class="view active-view">
+          <div class="view-heading"><div><p class="kicker">Punto de control de acceso</p><h1>Entrada principal</h1></div><span class="view-tag">Tablet / Recepcion</span></div>
+          <div class="reception-grid">
+            <section class="hero-panel"><p class="kicker">Validacion instantanea</p><h2>Un acceso claro empieza aqui.</h2><p>Consulta el C.I. del cliente. El sistema registra cada intento y muestra el estado real de su membresia.</p><form id="access-form"><label for="access-ci">C.I. o identificador</label><div class="form-line"><input id="access-ci" inputmode="numeric" placeholder="8888888" required><button class="primary" type="submit">Validar acceso</button></div></form><div class="demo-ids"><span>Casos de prueba</span><button type="button" data-fill="8888888">8888888 / Activo</button><button type="button" data-fill="9999999">9999999 / Vencido</button></div></section>
+            <section id="access-result" class="access-result neutral"><span class="result-symbol">?</span><p class="kicker">Esperando consulta</p><h2>Listos para recibirte</h2><p>La respuesta de acceso aparecera aqui.</p></section>
+          </div>
+        </section>
+        <section id="view-cliente" class="view">
+          <div class="view-heading"><div><p class="kicker">Portal del cliente</p><h1>Tu entrenamiento, en orden.</h1></div><span class="view-tag">Consulta / Pagos / Sugerencias</span></div>
+          <div class="client-tools"><form id="client-form" class="inline-form"><input id="client-ci" inputmode="numeric" placeholder="Tu C.I. (ej. 8888888)" required><button class="primary" type="submit">Cargar mi cuenta</button></form><div id="client-status" class="notice">Usa el C.I. de prueba 8888888.</div></div>
+          <div id="client-dashboard" class="dashboard-grid"></div>
+        </section>
+        <section id="view-admin" class="view">
+          <div class="view-heading"><div><p class="kicker">Centro de operaciones</p><h1>Administracion Mar-Yen.</h1></div><span class="view-tag">Aprobaciones / Inventario / Comunidad</span></div>
+          <div class="admin-login" id="admin-login"><form id="login-form" class="inline-form"><input id="login-user" placeholder="Usuario (admin)" required><input id="login-password" type="password" placeholder="Contraseña" required><button class="primary" type="submit">Entrar al panel</button></form><small>Demo: admin / admin123</small></div>
+          <div id="admin-dashboard" class="admin-dashboard hidden"></div>
+        </section>
+      </main>
+      <footer><span>Mar-Yen Gym / Gestion de acceso</span><span id="clock"></span></footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

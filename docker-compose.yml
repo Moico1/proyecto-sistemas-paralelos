@@ -1,35 +1,55 @@
-version: '3.8'
+networks:
+  syslab_network:
+    driver: bridge
 
 services:
   db:
     image: postgres:15-alpine
     container_name: syslab_db
+    restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: syslab_db
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: gym_db
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gym_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - syslab_network
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
     container_name: syslab_backend
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: node src/index.js
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "postgresql://postgres:postgres@db:5432/syslab_db?schema=public"
+      DATABASE_URL: "postgresql://postgres:postgrespassword@db:5432/gym_db?schema=public"
+      PORT: 3000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - syslab_network
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     container_name: syslab_frontend
+    restart: unless-stopped
     ports:
       - "5174:5173"
     depends_on:
       - backend
-
-volumes:
-  postgres_data:
+    networks:
+      - syslab_network
