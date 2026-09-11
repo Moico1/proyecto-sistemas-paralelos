@@ -24,6 +24,48 @@ Plataforma web para la administración del gimnasio Mar-Yen. El sistema gestiona
 
 ## 🚀 Despliegue con Docker
 ```bash
-docker compose up -d
-docker compose exec backend npx prisma migrate dev
-docker compose exec backend node prisma/seed.js
+docker compose up --build -d
+docker compose exec backend npx prisma db push --accept-data-loss
+docker compose exec backend npm run prisma:seed
+```
+
+La interfaz queda disponible en `http://localhost:5174` y la API en `http://localhost:3000`.
+Desde un celular conectado a la misma Wi-Fi usa la IP local de la computadora, por ejemplo `http://192.168.1.11:5174`.
+
+## 🖥️ Vistas funcionales
+
+- **Recepción / Tablet:** valida C.I., registra asistencia y muestra acceso verde o rojo con días restantes.
+- **Cliente:** consulta tarjeta virtual, catálogo, registra comprobante por QR/efectivo y envía quejas.
+- **Administración:** inicia sesión, aprueba pagos, atiende quejas, crea productos y publica avisos.
+
+Credenciales de demostración:
+
+- Admin: `admin` / `admin123`.
+- Tablet: `tablet_recep1` / `tablet123`.
+- Cliente: C.I. `8888888` (activo) o `9999999` (vencido).
+
+## 🔌 API principal
+
+- `POST /api/asistencia/validar`
+- `POST /api/auth/login`
+- `GET /api/cliente/:ci`
+- `GET /api/publico`
+- `POST /api/pagos`
+- `POST /api/quejas`
+- `GET /api/admin/resumen`
+- `PATCH /api/admin/pagos/:id`
+- `POST /api/admin/productos`
+- `POST /api/admin/publicaciones`
+
+Puedes comprobar la API con:
+
+```bash
+curl http://localhost:3000/health
+curl -X POST http://localhost:3000/api/asistencia/validar \
+  -H 'Content-Type: application/json' \
+  -d '{"ci":"8888888"}'
+```
+
+Los datos de prueba son `8888888` (membresía activa) y `9999999` (membresía vencida).
+
+> En desarrollo se usa `prisma db push` porque la carpeta de migraciones heredada tiene permisos de otro usuario en algunos equipos Linux. En una instalación limpia se recomienda corregir esos permisos y generar una migración formal antes de producción.
