@@ -25,6 +25,22 @@ $('#register-form').addEventListener('submit', async (event) => {
   }
 });
 
+// ensure registration form includes plan selector (for backward compatibility)
+(function ensurePlanSelector() {
+  const form = document.getElementById('register-form');
+  if (!form) return;
+  if (form.querySelector('[name="months"]')) return;
+  const wrapper = document.createElement('div');
+  const label = document.createElement('label'); label.htmlFor = 'months'; label.textContent = 'Plan:';
+  const select = document.createElement('select'); select.name = 'months'; select.id = 'months';
+  const o1 = document.createElement('option'); o1.value = '1'; o1.textContent = '1 mes - Bs.200';
+  const o3 = document.createElement('option'); o3.value = '3'; o3.textContent = '3 meses - Bs.500';
+  select.appendChild(o1); select.appendChild(o3);
+  wrapper.appendChild(label); wrapper.appendChild(select);
+  const submit = form.querySelector('button[type=submit]') || form.querySelector('button.primary');
+  if (submit) submit.parentNode.insertBefore(wrapper, submit);
+})();
+
 function selectView(view) {
   document.querySelectorAll('.view').forEach((section) => section.classList.toggle('active-view', section.id === `view-${view}`));
   document.querySelectorAll('.mode-button').forEach((button) => button.classList.toggle('active', button.dataset.view === view));
@@ -84,6 +100,23 @@ async function loadAdmin() {
   document.querySelectorAll('[data-delete-product]').forEach((button) => button.addEventListener('click', async () => { await request(`/api/admin/productos/${button.dataset.deleteProduct}`, { method: 'DELETE' }); loadAdmin(); }));
   $('#qr-form').addEventListener('submit', async (event) => { event.preventDefault(); const formData = new FormData(event.target); const image = await fileAsDataUrl(formData.get('qr')); await request('/api/admin/configuracion', { method: 'PATCH', body: JSON.stringify({ qr_url: image || formData.get('qr_url') }) }); loadAdmin(); });
   $('#post-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); await request('/api/admin/publicaciones', { method: 'POST', body: JSON.stringify(data) }); event.target.reset(); });
+
+  // enable quick edit buttons for users
+  document.querySelectorAll('[data-edit-id]').forEach((btn) => btn.addEventListener('click', async () => {
+    try {
+      const id = btn.dataset.editId;
+      const user = data.usuarios.find((u) => String(u.id) === String(id));
+      if (!user) return alert('Usuario no encontrado');
+      const nombre = prompt('Nombre', user.nombre) || user.nombre;
+      const apellido = prompt('Apellido', user.apellido) || user.apellido;
+      const email = prompt('Email', user.email) || user.email;
+      const ci = prompt('C.I.', user.ci) || user.ci;
+      await request(`/api/admin/usuarios/${id}`, { method: 'PATCH', body: JSON.stringify({ nombre, apellido, email, ci }) });
+      loadAdmin();
+    } catch (err) {
+      alert(`Error: ${err.message}`);
+    }
+  }));
 }
 
 $('#clock').textContent = new Intl.DateTimeFormat('es-BO', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
