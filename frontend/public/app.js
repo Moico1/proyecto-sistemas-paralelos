@@ -113,21 +113,43 @@ async function loadAdmin() {
   $('#qr-form').addEventListener('submit', async (event) => { event.preventDefault(); const formData = new FormData(event.target); const image = await fileAsDataUrl(formData.get('qr')); await request('/api/admin/configuracion', { method: 'PATCH', body: JSON.stringify({ qr_url: image || formData.get('qr_url') }) }); loadAdmin(); });
   $('#post-form').addEventListener('submit', async (event) => { event.preventDefault(); const data = Object.fromEntries(new FormData(event.target)); await request('/api/admin/publicaciones', { method: 'POST', body: JSON.stringify(data) }); event.target.reset(); });
 
-  // enable quick edit buttons for users
-  document.querySelectorAll('[data-edit-id]').forEach((btn) => btn.addEventListener('click', async () => {
-    try {
-      const id = btn.dataset.editId;
-      const user = data.usuarios.find((u) => String(u.id) === String(id));
-      if (!user) return alert('Usuario no encontrado');
-      const nombre = prompt('Nombre', user.nombre) || user.nombre;
-      const apellido = prompt('Apellido', user.apellido) || user.apellido;
-      const email = prompt('Email', user.email) || user.email;
-      const ci = prompt('C.I.', user.ci) || user.ci;
-      await request(`/api/admin/usuarios/${id}`, { method: 'PATCH', body: JSON.stringify({ nombre, apellido, email, ci }) });
-      loadAdmin();
-    } catch (err) {
-      alert(`Error: ${err.message}`);
+  // enable quick edit buttons for users — show modal form
+  document.querySelectorAll('[data-edit-id]').forEach((btn) => btn.addEventListener('click', (e) => {
+    const id = btn.dataset.editId;
+    const user = data.usuarios.find((u) => String(u.id) === String(id));
+    if (!user) return alert('Usuario no encontrado');
+    // build modal
+    const modal = document.createElement('div'); modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>Editar usuario</h3>
+        <form id="edit-user-form" class="stack-form">
+          <input name="nombre" placeholder="Nombre" required value="${escapeHtml(user.nombre)}">
+          <input name="apellido" placeholder="Apellido" required value="${escapeHtml(user.apellido)}">
+          <input name="email" type="email" placeholder="Email" required value="${escapeHtml(user.email)}">
+          <input name="ci" placeholder="C.I." required value="${escapeHtml(user.ci)}">
+          <div class="form-actions"><button type="submit" class="primary">Guardar</button><button type="button" id="cancel-edit">Cancelar</button></div>
+        </form>
+        <div id="edit-status" class="notice"></div>
+      </div>`;
+    document.body.appendChild(modal);
+    // style minimal modal if not present
+    if (!document.getElementById('admin-modal-style')) {
+      const s = document.createElement('style'); s.id = 'admin-modal-style'; s.textContent = `.modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999}.modal-content{background:#fff;padding:16px;border-radius:6px;min-width:320px} .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}`; document.head.appendChild(s);
     }
+    const form = modal.querySelector('#edit-user-form');
+    modal.querySelector('#cancel-edit').addEventListener('click', () => modal.remove());
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fd = Object.fromEntries(new FormData(form));
+      try {
+        const res = await request(`/api/admin/usuarios/${id}`, { method: 'PATCH', body: JSON.stringify(fd) });
+        modal.querySelector('#edit-status').textContent = res.mensaje || 'Guardado';
+        setTimeout(() => { modal.remove(); loadAdmin(); }, 700);
+      } catch (err) {
+        modal.querySelector('#edit-status').textContent = `Error: ${err.message}`;
+      }
+    });
   }));
 }
 
