@@ -1,0 +1,6 @@
+{
+  "name": "skill-sanitizer",
+  "version": "0.1.0",
+  "description": "Sanitización de entradas y normalización",
+  "capabilities": ["trim", "escape-html"]
+}

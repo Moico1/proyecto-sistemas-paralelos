@@ -1,0 +1,4 @@
+- id: role_based_access
+  description: "Verificar que el role esté en la lista permitida para acciones comunes"
+  condition: "['ADMIN','RECEPCION','CLIENTE'].includes(input.role)"
+  action: allow

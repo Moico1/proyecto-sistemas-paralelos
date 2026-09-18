@@ -1,0 +1,7 @@
+{
+  "name": "core-backend",
+  "version": "1.0.0",
+  "description": "Metadatos del skill Backend Core",
+  "entry": "backend.md",
+  "capabilities": ["validate-input", "log-access", "db-persist"]
+}

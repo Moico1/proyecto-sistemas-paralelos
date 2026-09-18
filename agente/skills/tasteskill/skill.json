@@ -1,0 +1,7 @@
+{
+  "name": "tasteskill",
+  "version": "0.1.0",
+  "description": "Skill de despliegue y verificación para entornos multi-contenedor",
+  "entry": "README.md",
+  "capabilities": ["deploy-check", "seed-db"]
+}

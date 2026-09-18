@@ -1,0 +1,6 @@
+{
+  "name": "skill-logger",
+  "version": "0.1.0",
+  "description": "Registro estructurado de eventos",
+  "capabilities": ["log-info", "log-error", "log-audit"]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "skill-metrics",
+  "version": "0.1.0",
+  "description": "Métricas y telemetría",
+  "capabilities": ["collect-metrics", "report-metrics"]
+}

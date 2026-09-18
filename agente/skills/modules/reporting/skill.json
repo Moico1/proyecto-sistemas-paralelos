@@ -1,0 +1,6 @@
+{
+  "name": "skill-reporting",
+  "version": "0.1.0",
+  "description": "Generación de informes y dashboards",
+  "capabilities": ["generate-report", "summary-stats"]
+}

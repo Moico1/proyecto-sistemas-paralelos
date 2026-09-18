@@ -1,0 +1,6 @@
+{
+  "name": "skill-webhook",
+  "version": "0.1.0",
+  "description": "Recepción y envío de webhooks",
+  "capabilities": ["receive-webhook", "send-webhook"]
+}

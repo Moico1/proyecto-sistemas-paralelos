@@ -1,0 +1,6 @@
+{
+  "name": "skill-auth",
+  "version": "0.1.0",
+  "description": "Autenticación y gestión de sesiones",
+  "capabilities": ["authenticate", "refresh-token"]
+}

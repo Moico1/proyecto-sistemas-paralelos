@@ -1,0 +1,9 @@
+- id: name_not_empty
+  description: "El campo 'name' no puede estar vacío"
+  condition: "input.name != null && String(input.name).trim() !== ''"
+  action: allow
+
+- id: email_format
+  description: "Validar formato básico de correo electrónico"
+  condition: "typeof input.email === 'string' && input.email.includes('@') && input.email.includes('.')"
+  action: allow

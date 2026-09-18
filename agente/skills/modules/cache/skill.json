@@ -1,0 +1,6 @@
+{
+  "name": "skill-cache",
+  "version": "0.1.0",
+  "description": "Capa de cache para respuestas frecuentes",
+  "capabilities": ["get-cache", "set-cache"]
+}

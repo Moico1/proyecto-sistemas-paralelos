@@ -1,0 +1,6 @@
+{
+  "name": "skill-importer",
+  "version": "0.1.0",
+  "description": "Importar datos desde CSV/JSON",
+  "capabilities": ["import-csv", "import-json"]
+}

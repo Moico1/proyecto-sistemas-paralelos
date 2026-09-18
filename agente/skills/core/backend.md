@@ -1,4 +1,4 @@
-# Skill Backend SysLab 2.0
+# Skill Backend - Core
 
 - Mantener Express como capa HTTP y Prisma como unica capa de persistencia.
 - Validar entradas antes de consultar PostgreSQL.

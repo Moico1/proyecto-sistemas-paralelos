@@ -1,0 +1,10 @@
+[
+  {
+    "ts": 1789742257630,
+    "payload": {
+      "name": "Juan Perez",
+      "email": "juan@example.com",
+      "role": "CLIENTE"
+    }
+  }
+]

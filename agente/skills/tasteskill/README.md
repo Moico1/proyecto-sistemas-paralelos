@@ -1,4 +1,4 @@
-# TasteSkill / SysLab
+# TasteSkill / Proyecto
 
 Skill local para la practica de despliegue multi-contenedor.
 

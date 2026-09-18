@@ -1,0 +1,6 @@
+{
+  "name": "skill-email",
+  "version": "0.1.0",
+  "description": "Envío y plantillas de correo",
+  "capabilities": ["send-email", "template-render"]
+}

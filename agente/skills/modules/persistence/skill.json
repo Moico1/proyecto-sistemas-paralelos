@@ -1,0 +1,6 @@
+{
+  "name": "skill-persistence",
+  "version": "0.1.0",
+  "description": "Abstracciones para persistencia (Prisma/DB)",
+  "capabilities": ["db-save", "db-query"]
+}

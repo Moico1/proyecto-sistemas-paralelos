@@ -1,0 +1,6 @@
+{
+  "name": "skill-scheduler",
+  "version": "0.1.0",
+  "description": "Tareas programadas y jobs",
+  "capabilities": ["cron-job", "delayed-task"]
+}

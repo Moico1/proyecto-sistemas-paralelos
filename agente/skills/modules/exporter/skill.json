@@ -1,0 +1,6 @@
+{
+  "name": "skill-exporter",
+  "version": "0.1.0",
+  "description": "Exportar datos a CSV/PDF",
+  "capabilities": ["export-csv", "export-pdf"]
+}

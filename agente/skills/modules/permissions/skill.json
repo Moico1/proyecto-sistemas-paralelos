@@ -1,0 +1,6 @@
+{
+  "name": "skill-permissions",
+  "version": "0.1.0",
+  "description": "Gestión y verificación de permisos por rol",
+  "capabilities": ["check-role", "map-routes"]
+}

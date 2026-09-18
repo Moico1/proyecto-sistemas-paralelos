@@ -1,0 +1,9 @@
+{
+  "name": "agente-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

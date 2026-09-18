@@ -1,0 +1,27 @@
+name: Asistencia - registro y verificación
+description: Flujo para validar y registrar intentos de acceso (Asistencia)
+steps:
+  - id: validate_input
+    skill: core-backend
+    action: validate-input
+    rules:
+      - validation_rules.yaml::name_not_empty
+      - validation_rules.yaml::email_format
+    on_failure: reject
+
+  - id: check_permissions
+    skill: core-backend
+    action: check-permissions
+    rules:
+      - access_control.yaml::role_based_access
+    on_failure: reject
+
+  - id: persist
+    skill: core-backend
+    action: db-persist
+    on_success: notify
+
+  - id: notify
+    skill: tasteskill
+    action: deploy-check
+    on_success: complete

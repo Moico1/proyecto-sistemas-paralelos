@@ -1,0 +1,6 @@
+{
+  "name": "skill-validation",
+  "version": "0.1.0",
+  "description": "Validaciones de entrada comunes",
+  "capabilities": ["validate-schema", "sanitize-input"]
+}
